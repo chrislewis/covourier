@@ -11,20 +11,26 @@ import NewDelivery from './components/NewDelivery';
 class App extends Component {
   render() {
     return (
-      <Router>
-        <Switch>
-          <Route path="/deliveries">
-            <Deliveries deliveries={this.state.deliveries} />
-          </Route>
-          <Route path="/delivery">
-            <NewDelivery />
-          </Route>
-        </Switch>
-        <div>
-          <Link to="/deliveries">deliveries</Link>
-          <Link to="/delivery">&#x2295;</Link>
-        </div>
-      </Router>
+      <div className="app">
+        <Router>
+          <Switch>
+            <Route path="/deliveries">
+              <Deliveries deliveries={this.state.deliveries} />
+            </Route>
+            <Route path="/delivery">
+              <NewDelivery />
+            </Route>
+          </Switch>
+
+          <div className="navigation">
+            <nav>
+              <Link to="/deliveries">Active Deliveries</Link>
+              <Link className="create-delivery" to="/delivery">&#x2295;</Link>
+            </nav>
+          </div>
+
+        </Router>
+      </div>
     );
   }
 

@@ -10,7 +10,7 @@ class Deliveries extends Component {
         const { deliveries } = this.props;
         return (
             <>
-                <center><h4>Deliveries</h4></center>
+                <center><h2>Active Deliveries</h2></center>
                 <div>
                     {deliveries.map((delivery) => (
                         <Delivery key={delivery.id} delivery={delivery} />
