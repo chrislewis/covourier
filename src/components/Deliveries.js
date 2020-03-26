@@ -10,6 +10,7 @@ class Deliveries extends Component {
         const { deliveries } = this.props;
         return (
             <>
+                <center><h4>Deliveries</h4></center>
                 <div>
                     {deliveries.map((delivery) => (
                         <Delivery key={delivery.id} delivery={delivery} />
@@ -28,7 +29,6 @@ class Delivery extends Component {
     }
 
     handleFulfillPartial() {
-        
         fetch('http://jsonplaceholder.typicode.com/users')
             .then(res => res.json())
             .then((data) => {
