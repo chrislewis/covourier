@@ -4,6 +4,8 @@
 
 Get all deliveries.
 
+Returns an array of delivery models.
+
 #### `/delivery`
 
 ##### GET
