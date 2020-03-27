@@ -18,6 +18,8 @@ Create a new delivery.
 
 #### Delivery
 
+A delivery represents a named item or set of items bound from one location to another, to be delivered by a courier.
+
 ```json
 {
     "item": "Ventilator components",
@@ -61,5 +63,3 @@ Create a new delivery.
 Indicates the status of the delivery.
 
 type: enum: `unassigned | assigned | enroute | delivered | cancelled`
-
-/deliveries
