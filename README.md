@@ -56,6 +56,10 @@ Create a new delivery.
 }
 ```
 
-##### `status`
+##### Field: `status`
+
+Indicates the status of the delivery.
+
+type: enum: `unassigned | assigned | enroute | delivered | cancelled`
 
 /deliveries
