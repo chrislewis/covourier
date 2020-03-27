@@ -1,4 +1,22 @@
-GET /delivery
+#### `/deliveries`
+
+##### GET
+
+Get all deliveries.
+
+#### `/delivery`
+
+##### GET
+
+Request a single delivery.
+
+##### POST
+
+Create a new delivery.
+
+### Models
+
+#### Delivery
 
 ```json
 {
@@ -37,5 +55,7 @@ GET /delivery
 
 }
 ```
+
+##### `status`
 
 /deliveries
