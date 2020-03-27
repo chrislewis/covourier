@@ -3,67 +3,42 @@
     {
       "PutRequest": {
         "Item": {
-          "id":     { "S": "ad4b9078-39ec-41e2-82ca-e1ec412e2229" },
-          "item":   { "S": "Small plastic parts (like a ziplock full)" },
-          "status": { "S":  "UNASSIGNED" },
+          "id":       { "S": "ad4b9078-39ec-41e2-82ca-e1ec412e2229" },
+          "item":     { "S": "Small plastic parts (like a ziplock full)" },
+          "courier":  { "M": {
+            "id":         { "S":  "6a31fbb5-a581-442c-8753-72c895543cc6" },
+            "firstName":  { "S":  "John" },
+            "lastName":   { "S":  "B" }
+          }
+
+          },
+          "status": { "S":  "IN_TRANSIT" },
           "pickupAddress" : { "M":  {
-            "streetAddress": { "S":  "" },
-            "city": { "S":  "" },
-            "state": { "S":  "" },
-            "zip": { "S":  "" }
+            "streetAddress":  { "S":  "150 55th Street" },
+            "city":           { "S":  "Brooklyn" },
+            "state":          { "S":  "NY" },
+            "zip":            { "S":  "11220" }
           }},
           "pickupContacts" : { "L": [
             { "M":  {
-              "firstName": { "S":  "" },
-              "lastName": { "S":  "" },
-              "phone": { "S":  "" }
+              "firstName":  { "S":  "Mary" },
+              "lastName":   { "S":  "L" },
+              "phone":      { "S":  "555-555-5555" }
             }}
           ] },
           "deliveryAddress": { "M":  {
-            "streetAddress": { "S":  "" },
-            "city": { "S":  "" },
-            "state": { "S":  "" },
-            "zip": { "S":  "" }
+            "streetAddress":  { "S":  "6 MetroTech Center" },
+            "city":           { "S":  "Brooklyn" },
+            "state":          { "S":  "NY" },
+            "zip":            { "S":  "11201" }
           }},
           "deliveryContacts": { "L": [
             { "M":  {
-              "firstName": { "S":  "" },
-              "lastName": { "S":  "" },
-              "phone": { "S":  "" }
+              "firstName":  { "S":  "Bob" },
+              "lastName":   { "S":  "M" },
+              "phone":      { "S":  "444-444-4444" }
             }}
           ] }
-        }
-      }
-    },
-    {
-      "PutRequest": {
-        "Item": {
-          "id":     { "S": "c2b8191a-1c54-4445-9742-70c4aeee2445" },
-          "item":   { "S": "Parts for a ventilator" }
-        }
-      }
-    },
-    {
-      "PutRequest": {
-        "Item": {
-          "id":     { "S": "16bb85ed-5f77-49e6-a48a-60977e6b2e47" },
-          "item":   { "S": "Small plastic parts (like a ziplock full)" }
-        }
-      }
-    },
-    {
-      "PutRequest": {
-        "Item": {
-          "id":     { "S": "7dd28bce-e524-4c8d-b2fa-890a98af722c" },
-          "item":   { "S": "Small plastic parts (like a ziplock full)" }
-        }
-      }
-    },
-    {
-      "PutRequest": {
-        "Item": {
-          "id":     { "S": "776b054b-f056-4da7-bdd4-5a8461d3e06a" },
-          "item":   { "S": "Small plastic parts (like a ziplock full)" }
         }
       }
     }
