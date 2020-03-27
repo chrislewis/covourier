@@ -5,12 +5,14 @@ import java.util.UUID
 import chrslws.covourier.model._
 import com.amazonaws.client.builder.AwsClientBuilder
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder
+import com.amazonaws.services.dynamodbv2.document.spec.UpdateItemSpec
+import com.amazonaws.services.dynamodbv2.document.utils.ValueMap
 import com.amazonaws.services.dynamodbv2.document.{DynamoDB, Item}
 
 import scala.collection.mutable.ListBuffer
 
 trait DeliveryService {
-  def assignDelivery(deliveryId: UUID, courier: Courier)
+  def claimDelivery(deliveryId: UUID, courier: Courier): Unit // TODO
   def createNew(delivery: NewDelivery): Delivery
   def getAll(): List[Delivery]
 }
@@ -81,7 +83,21 @@ final class LocalDynamoDbImpl extends DeliveryService {
     contacts.toList
   }
 
-  override def assignDelivery(deliveryId: UUID, courier: Courier): Unit = ???
+  override def claimDelivery(deliveryId: UUID, courier: Courier): Unit = {
+    val update = new UpdateItemSpec()
+      .withPrimaryKey("id", deliveryId.toString)
+      .withUpdateExpression("set R_status = :status, courier = :courier")
+      .withConditionExpression("R_status = :currentStatus")
+      .withValueMap(
+        new ValueMap()
+          .withString(":status", Status.Assigned.name)
+          .withMap(":courier", courerAsMap(courier))
+          .withString(":currentStatus", Status.Unassigned.name)
+      )
+
+    table.updateItem(update)
+    ()
+  }
 
   override def getAll(): List[Delivery] = {
     val results = table.scan()
@@ -94,7 +110,7 @@ final class LocalDynamoDbImpl extends DeliveryService {
         item.getString("item"),
         courier = readCourier(Option(item.getMap[String]("courier"))),
         status =
-          readStatus(Option(item.getString("status"))).getOrElse(sys.error("Invalid status!")),
+          readStatus(Option(item.getString("R_status"))).getOrElse(sys.error("Invalid status!")),
         pickupAddress = readAddress(item.getMap[String]("pickupAddress")),
         pickupContacts = readContacts(item.getList[java.util.Map[String, String]]("pickupContacts")),
         deliveryAddress = readAddress(item.getMap[String]("deliveryAddress")),
@@ -121,7 +137,7 @@ final class LocalDynamoDbImpl extends DeliveryService {
     val item = new Item()
       .withString("id", d.id.toString)
       .withString("item", d.item)
-      .withString("status", d.status.name)
+      .withString("R_status", d.status.name)
       .withMap(
         "pickupAddress",
         java.util.Map
@@ -170,12 +186,15 @@ final class LocalDynamoDbImpl extends DeliveryService {
     d.courier.foreach { c =>
       item.withMap(
         "courier",
-        java.util.Map
-          .of[String, String]("id", c.id.toString, "firstName", c.firstName, "lastName", c.lastName)
+        courerAsMap(c)
       )
     }
 
-    val result = table.putItem(item)
+    table.putItem(item)
     d
   }
+
+  def courerAsMap(c: Courier) =
+    java.util.Map
+      .of[String, String]("id", c.id.toString, "firstName", c.firstName, "lastName", c.lastName)
 }
