@@ -27,7 +27,8 @@ A delivery represents a named item or set of items bound from one location to an
     "item": "Ventilator components",
     "courier": {
         "id": "",
-        "name": ""
+        "firstName": "",
+        "lastName": ""
     },
     "status": "unassigned",
     "pickupAddress": {
@@ -49,7 +50,7 @@ A delivery represents a named item or set of items bound from one location to an
         "state": "NY",
         "zip": "11201"
     },
-    "pickupContacts": [
+    "deliveryContacts": [
         {
             "firstName": "",
             "lastName": "",

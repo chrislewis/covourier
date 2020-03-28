@@ -1,0 +1,125 @@
+{
+  "Deliveries": [
+    {
+      "PutRequest": {
+        "Item": {
+          "id":       { "S": "ad4b9078-39ec-41e2-82ca-e1ec412e2229" },
+          "item":     { "S": "Small plastic parts (like a ziplock full)" },
+          "courier":  { "M": {
+            "id":         { "S":  "6a31fbb5-a581-442c-8753-72c895543cc6" },
+            "firstName":  { "S":  "John" },
+            "lastName":   { "S":  "B" }
+          }},
+          "R_status": { "S":  "IN_TRANSIT" },
+          "pickupAddress" : { "M": {
+            "streetAddress":  { "S":  "150 55th Street" },
+            "city":           { "S":  "Brooklyn" },
+            "state":          { "S":  "NY" },
+            "zip":            { "S":  "11220" }
+          }},
+          "pickupContacts" : { "L": [
+            { "M":  {
+              "firstName":  { "S":  "Mary" },
+              "lastName":   { "S":  "L" },
+              "phone":      { "S":  "555-555-5555" }
+            }}
+          ] },
+          "deliveryAddress": { "M": {
+            "streetAddress":  { "S":  "6 MetroTech Center" },
+            "city":           { "S":  "Brooklyn" },
+            "state":          { "S":  "NY" },
+            "zip":            { "S":  "11201" }
+          }},
+          "deliveryContacts": { "L": [
+            { "M":  {
+              "firstName":  { "S":  "Bob" },
+              "lastName":   { "S":  "M" },
+              "phone":      { "S":  "444-444-4444" }
+            }}
+          ] }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "id": {
+            "S": "a252342b-4bda-4c2f-a21d-7157af1ab5cf"
+          },
+          "item": {
+            "S": "Small plastic parts (like a ziplock full)"
+          },
+          "R_status": {
+            "S": "UNASSIGNED"
+          },
+          "pickupAddress": {
+            "M": {
+              "streetAddress": {
+                "S": "150 55th Street"
+              },
+              "city": {
+                "S": "Brooklyn"
+              },
+              "state": {
+                "S": "NY"
+              },
+              "zip": {
+                "S": "11220"
+              }
+            }
+          },
+          "pickupContacts": {
+            "L": [
+              {
+                "M": {
+                  "firstName": {
+                    "S": "Mary"
+                  },
+                  "lastName": {
+                    "S": "L"
+                  },
+                  "phone": {
+                    "S": "555-555-5555"
+                  }
+                }
+              }
+            ]
+          },
+          "deliveryAddress": {
+            "M": {
+              "streetAddress": {
+                "S": "6 MetroTech Center"
+              },
+              "city": {
+                "S": "Brooklyn"
+              },
+              "state": {
+                "S": "NY"
+              },
+              "zip": {
+                "S": "11201"
+              }
+            }
+          },
+          "deliveryContacts": {
+            "L": [
+              {
+                "M": {
+                  "firstName": {
+                    "S": "Bob"
+                  },
+                  "lastName": {
+                    "S": "M"
+                  },
+                  "phone": {
+                    "S": "444-444-4444"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  ]
+}
