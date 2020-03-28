@@ -13,4 +13,4 @@ libraryDependencies ++= Seq(
 
 scalafmtOnCompile := true
 
-initialCommands := "import chrslws.covourier._; import chrslws.covourier.service._; val s = new LocalDynamoDbImpl()"
+initialCommands := "import chrslws.covourier._; import chrslws.covourier.model._; import chrslws.covourier.service._; val s = DynamoDbDeliveryService.local"

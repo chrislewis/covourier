@@ -8,17 +8,18 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder
 import com.amazonaws.services.dynamodbv2.document.spec.UpdateItemSpec
 import com.amazonaws.services.dynamodbv2.document.utils.ValueMap
 import com.amazonaws.services.dynamodbv2.document.{DynamoDB, Item}
+import com.amazonaws.services.dynamodbv2.model.ConditionalCheckFailedException
 
 import scala.collection.mutable.ListBuffer
 
 trait DeliveryService {
-  def claimDelivery(deliveryId: UUID, courier: Courier): Unit // TODO
+  def claimDelivery(deliveryId: UUID, courier: Courier): Delivery // TODO
   def createNew(delivery: NewDelivery): Delivery
   def getAll(): List[Delivery]
 }
 
-final class LocalDynamoDbImpl extends DeliveryService {
-  private val local =
+object DynamoDbDeliveryService {
+  lazy val local = new DynamoDbDeliveryService(
     new DynamoDB(
       AmazonDynamoDBClientBuilder
         .standard()
@@ -30,8 +31,12 @@ final class LocalDynamoDbImpl extends DeliveryService {
         )
         .build()
     )
+  )
+}
 
-  private val table = local.getTable("Deliveries")
+final class DynamoDbDeliveryService(dynamoDb: DynamoDB) extends DeliveryService {
+
+  private val table = dynamoDb.getTable("Deliveries")
 
   val newDeliveryFixture =
     NewDelivery(
@@ -83,7 +88,7 @@ final class LocalDynamoDbImpl extends DeliveryService {
     contacts.toList
   }
 
-  override def claimDelivery(deliveryId: UUID, courier: Courier): Unit = {
+  override def claimDelivery(deliveryId: UUID, courier: Courier): Delivery = {
     val update = new UpdateItemSpec()
       .withPrimaryKey("id", deliveryId.toString)
       .withUpdateExpression("set R_status = :status, courier = :courier")
@@ -94,10 +99,29 @@ final class LocalDynamoDbImpl extends DeliveryService {
           .withMap(":courier", courerAsMap(courier))
           .withString(":currentStatus", Status.Unassigned.name)
       )
+      .withReturnValues("ALL_NEW")
 
-    table.updateItem(update)
-    ()
+    try {
+      val udpated = table.updateItem(update)
+      readDelivery(udpated.getItem)
+    } catch {
+      case _: ConditionalCheckFailedException => ???
+    }
   }
+
+  def readDelivery(item: Item): Delivery =
+    Delivery(
+      UUID.fromString(item.getString("id")),
+      item.getString("item"),
+      courier = readCourier(Option(item.getMap[String]("courier"))),
+      status =
+        readStatus(Option(item.getString("R_status"))).getOrElse(sys.error("Invalid status!")),
+      pickupAddress = readAddress(item.getMap[String]("pickupAddress")),
+      pickupContacts = readContacts(item.getList[java.util.Map[String, String]]("pickupContacts")),
+      deliveryAddress = readAddress(item.getMap[String]("deliveryAddress")),
+      deliveryContacts =
+        readContacts(item.getList[java.util.Map[String, String]]("deliveryContacts"))
+    )
 
   override def getAll(): List[Delivery] = {
     val results = table.scan()
@@ -105,18 +129,7 @@ final class LocalDynamoDbImpl extends DeliveryService {
     val it = results.iterator()
     while (it.hasNext) {
       val item = it.next()
-      widgets += Delivery(
-        UUID.fromString(item.getString("id")),
-        item.getString("item"),
-        courier = readCourier(Option(item.getMap[String]("courier"))),
-        status =
-          readStatus(Option(item.getString("R_status"))).getOrElse(sys.error("Invalid status!")),
-        pickupAddress = readAddress(item.getMap[String]("pickupAddress")),
-        pickupContacts = readContacts(item.getList[java.util.Map[String, String]]("pickupContacts")),
-        deliveryAddress = readAddress(item.getMap[String]("deliveryAddress")),
-        deliveryContacts =
-          readContacts(item.getList[java.util.Map[String, String]]("deliveryContacts"))
-      )
+      widgets += readDelivery(item)
     }
     widgets.toList
   }
