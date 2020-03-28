@@ -9,6 +9,12 @@ import Deliveries from './components/Deliveries';
 import NewDelivery from './components/NewDelivery';
 
 class App extends Component {
+  
+  constructor({ deliveries }) {
+    super();
+    this.deliveries = deliveries;
+  }
+
   render() {
     return (
       <div className="app">
@@ -39,8 +45,7 @@ class App extends Component {
   }
 
   componentDidMount() {
-    fetch('http://jsonplaceholder.typicode.com/users')
-      .then(res => res.json())
+    this.deliveries.getAll()
       .then((data) => {
         this.setState({ deliveries: data })
       })
