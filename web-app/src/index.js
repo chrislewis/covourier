@@ -4,10 +4,11 @@ import './styles/style.scss';
 
 import App from './App';
 import * as serviceWorker from './serviceWorker';
+import { deliveries } from './service/Deliveries';
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <App deliveries={deliveries}/>
   </React.StrictMode>,
   document.getElementById('root')
 );
