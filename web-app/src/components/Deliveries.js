@@ -69,9 +69,9 @@ class Delivery extends Component {
 
                 <div className="card" key={delivery.id} onClick={(e) => this.handleAccept(e, delivery.id)}>
                     <div className="card-body">
-                        <h5 className="card-title">{delivery.name}</h5>
-                        <h6 className="card-subtitle mb-2 text-muted">{delivery.email}</h6>
-                        <p className="card-text">{delivery.company.catchPhrase}</p>
+                        <h5 className="card-title">{delivery.item}</h5>
+                        <h6 className="card-subtitle mb-2 text-muted">todo</h6>
+                        <p className="card-text">todo</p>
                     </div>
                 </div>
             </>

@@ -19,6 +19,6 @@ class Deliveries {
     }
 }
 
-const deliveries = Deliveries.fake();
+const deliveries = Deliveries.local();
 
 export { deliveries };
