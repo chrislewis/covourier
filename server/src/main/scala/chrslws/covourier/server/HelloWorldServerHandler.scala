@@ -32,24 +32,19 @@ class HttpHelloWorldServerHandler extends SimpleChannelInboundHandler[HttpReques
     ()
   }
 
-  override def channelRead0(ctx: ChannelHandlerContext, msg: HttpRequest): Unit = {
-    if (msg.isInstanceOf[HttpRequest]) {
-      val req = msg.asInstanceOf[HttpRequest]
-      val keepAlive = HttpUtil.isKeepAlive(req)
+  override def channelRead0(ctx: ChannelHandlerContext, req: HttpRequest): Unit = {
+    val keepAlive = HttpUtil.isKeepAlive(req)
 
-      println(s"url=${req.uri()}")
+    val response = dispatcher.dispatch(req)
 
-      val response = dispatcher.dispatch(req)
-
-      if (keepAlive)
-        if (!req.protocolVersion.isKeepAliveDefault) response.headers.set(CONNECTION, KEEP_ALIVE)
-        else { // Tell the client we're going to close the connection.
-          response.headers.set(CONNECTION, CLOSE)
-        }
-      val f = ctx.write(response)
-      if (!keepAlive) f.addListener(ChannelFutureListener.CLOSE)
-      ()
-    }
+    if (keepAlive)
+      if (!req.protocolVersion.isKeepAliveDefault) response.headers.set(CONNECTION, KEEP_ALIVE)
+      else { // Tell the client we're going to close the connection.
+        response.headers.set(CONNECTION, CLOSE)
+      }
+    val f = ctx.write(response)
+    if (!keepAlive) f.addListener(ChannelFutureListener.CLOSE)
+    ()
   }
 
   override def exceptionCaught(ctx: ChannelHandlerContext, cause: Throwable): Unit = {
