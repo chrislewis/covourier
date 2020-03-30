@@ -7,13 +7,13 @@ class Deliveries extends Component {
     }
 
     render() {
-        const { deliveries } = this.props;
+        const { deliveryService, deliveries } = this.props;
         return (
             <>
                 <center><h2>Active Deliveries</h2></center>
                 <div>
                     {deliveries.map((delivery) => (
-                        <Delivery key={delivery.id} delivery={delivery} />
+                        <Delivery key={delivery.id} deliveryService={deliveryService} delivery={delivery} />
                     ))}
                 </div>
             </>
@@ -23,6 +23,11 @@ class Deliveries extends Component {
 
 class Delivery extends Component {
     state = { show: false }
+
+    constructor({ deliveryService }) {
+        super();
+        this.deliveryService = deliveryService;
+      }
 
     handleAccept({ currentTarget }, id) {
         this.setState({ show: true, deliveryDOMNode: currentTarget, deliveryId: id });
@@ -71,12 +76,39 @@ class Delivery extends Component {
                     <div className="card-body">
                         <h5 className="card-title">{delivery.item}</h5>
                         <h6 className="card-subtitle mb-2 text-muted">todo</h6>
-                        <p className="card-text">todo</p>
+                        <div>From</div>
+                        <Address address={delivery.pickupAddress}/>
+                        <Contacts contacts={delivery.pickupContacts}/>
+                        <div>To</div>
+                        <Address address={delivery.deliveryAddress}/>
+                        <Contacts contacts={delivery.deliveryContacts}/>
                     </div>
                 </div>
             </>
       );
     }
 }
+
+const getGMapsURI = (addressStr) => {
+    const encoded = encodeURIComponent(addressStr);
+    return `https://www.google.com/maps/search/?api=1&query=${encoded}`;
+};
+
+const AA = ({href, text}) => <a onClick={(e) => e.stopPropagation()} href={href}>{text}</a>
+
+const Phone = ({phone}) => <AA href={`tel:${phone}`} text={phone}/>
+
+const Address = ({address}) => {
+    const { streetAddress, city, state, zip } = address;
+    const addressStr = [streetAddress, city, state, zip].join(" ");
+    return <AA href={getGMapsURI(addressStr)} text={`${streetAddress}, ${city} ${state}, ${zip}`}/>
+}
+
+const Contacts = ({contacts}) =>
+    <div>
+        {contacts.map((contact) => (
+            <div>{contact.firstName} - <Phone phone={contact.phone}/></div>
+        ))}
+    </div>
   
 export default Deliveries;

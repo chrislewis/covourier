@@ -8,8 +8,8 @@ import io.circe.syntax._
 import io.netty.buffer.Unpooled
 import io.netty.handler.codec.http.HttpHeaderNames.{CONTENT_LENGTH, CONTENT_TYPE}
 import io.netty.handler.codec.http.HttpHeaderValues.APPLICATION_JSON
-import io.netty.handler.codec.http.HttpResponseStatus.{OK, NOT_FOUND}
-import io.netty.handler.codec.http.{DefaultFullHttpResponse, HttpRequest}
+import io.netty.handler.codec.http.HttpResponseStatus.{NOT_FOUND, OK}
+import io.netty.handler.codec.http.{DefaultFullHttpResponse, HttpMethod, HttpRequest}
 
 class RequestDispatcher(service: DeliveryService) {
 
@@ -18,8 +18,8 @@ class RequestDispatcher(service: DeliveryService) {
   }
 
   def dispatch(request: HttpRequest) = {
-    request.uri() match {
-      case "/deliveries" =>
+    (request.uri(), request.method()) match {
+      case ("/deliveries", HttpMethod.GET) =>
         val deliveries = service.getAll()
         val jsonText = deliveries.asJson.noSpaces
         val response = new DefaultFullHttpResponse(
