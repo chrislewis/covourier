@@ -75,7 +75,8 @@ class Delivery extends Component {
                 <div className="card" key={delivery.id} onClick={(e) => this.handleAccept(e, delivery.id)}>
                     <div className="card-body">
                         <h5 className="card-title">{delivery.item}</h5>
-                        <h6 className="card-subtitle mb-2 text-muted">todo</h6>
+                        <h6 className="card-subtitle mb-2 text-muted">{delivery.description}</h6>
+                        <h6 className="card-subtitle mb-2 text-muted">{new Date(delivery.pickupTime).toString()}</h6>
                         <div>From</div>
                         <Address address={delivery.pickupAddress}/>
                         <Contacts contacts={delivery.pickupContacts}/>
@@ -98,6 +99,8 @@ const AA = ({href, text}) => <a onClick={(e) => e.stopPropagation()} href={href}
 
 const Phone = ({phone}) => <AA href={`tel:${phone}`} text={phone}/>
 
+const Email = ({email}) => <AA href={`mailto:${email}`} text={email}/>
+
 const Address = ({address}) => {
     const { streetAddress, city, state, zip } = address;
     const addressStr = [streetAddress, city, state, zip].join(" ");
@@ -107,7 +110,7 @@ const Address = ({address}) => {
 const Contacts = ({contacts}) =>
     <div>
         {contacts.map((contact) => (
-            <div>{contact.firstName} - <Phone phone={contact.phone}/></div>
+            <div>{contact.firstName} - <Phone phone={contact.phone}/> | <Email email={contact.email}/></div>
         ))}
     </div>
   
