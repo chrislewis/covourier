@@ -17,13 +17,14 @@ class Deliveries {
     static dummy() {
         return {
             getAll: () => Promise.resolve([{
-                "id": "fake",
+                "id": "fake-id",
                 "item": "Ventilator components",
-                "courier": {
-                    "id": "",
-                    "firstName": "",
-                    "lastName": ""
-                },
+                "description": "Small box, approximately 10x5 inches",
+                // "courier": { // TODO
+                //     "id": "",
+                //     "firstName": "",
+                //     "lastName": ""
+                // },
                 "status": "unassigned",
                 "pickupAddress": {
                     "streetAddress": "150 55th Street",
@@ -31,11 +32,13 @@ class Deliveries {
                     "state": "NY",
                     "zip": "11220"
                 },
+                "pickupTime": "2020-03-31T13:04:52Z",
                 "pickupContacts": [
                     {
                         "firstName": "Mary",
                         "lastName": "F",
-                        "phone": "555 555 5555"
+                        "phone": "555 555 5555",
+                        "email": "maryf@fake.fke"
                     }
                 ],
                 "deliveryAddress": {
@@ -46,9 +49,10 @@ class Deliveries {
                 },
                 "deliveryContacts": [
                     {
-                        "firstName": "",
-                        "lastName": "",
-                        "phone": ""
+                        "firstName": "Bill",
+                        "lastName": "D",
+                        "phone": "444 444 4444",
+                        "email": "billd@fake.fke"
                     }
                 ],
             
