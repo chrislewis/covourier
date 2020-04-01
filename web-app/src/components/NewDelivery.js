@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
-import { Formik } from 'formik';
+import { Formik, Form as Formk, Field, FieldArray } from 'formik';
 
 class NewDelivery extends Component {
 
@@ -16,7 +16,9 @@ class NewDelivery extends Component {
             <div className="card">
                 <Formik
                 initialValues={{
-                    item: ''
+                    item: '',
+                    senders: [{ firstName: '', lastName: '', phone: '', email: '' }],
+                    recipients: [{ firstName: '', lastName: '', phone: '', email: '' }]
                 }}
                  onSubmit={(values, { setSubmitting }) => {
                     console.log(values)
@@ -36,56 +38,184 @@ class NewDelivery extends Component {
                         isValid,
                         errors,
                     }) => (
-            <Form onSubmit={handleSubmit}>
-                <Form.Group controlId="item">
-                    <Form.Label>Item</Form.Label>
-                    <Form.Control type="text" name="item" onChange={handleChange} value={values.item} placeholder="ex: ventilator components" required />
-                </Form.Group>
+            <Formk>
+                <div className="form-group">
+                    <label for="item">Item</label>
+                    <Field
+                        className="form-control"
+                        id="item"
+                        name="item"
+                        value={values.item}
+                        placeholder="ex: ventilator components" required
+                    />
+                </div>
 
-                <Form.Group controlId="sender-name">
-                    <Form.Label>Sender Name</Form.Label>
-                    <Form.Control type="text" name="senderName" placeholder="ex: Mary" />
-                </Form.Group>
+                todo descr
 
-                <Form.Group controlId="sender-email">
-                    <Form.Label>Sender Email</Form.Label>
-                    <Form.Control type="email" name="senderEmail" placeholder="doc@foo.com" />
-                </Form.Group>
+                <FieldArray
+                    name="senders"
+                    render={arrayHelpers => (
+                        <>
+                            {values.senders.map((sender, index) => (
+                            <div>
+                                <button
+                                    type="button"
+                                    onClick={() => arrayHelpers.remove(index)}
+                                >remove</button>
+                                <div className="row">
+                                    <div className="col">
+                                        <label for={`senders.${index}.firstName`}>Sender Name</label>
+                                    </div>
+                                    <div className="col">
+                                        <label for={`senders.${index}.lastName`}>Sender Last Name</label>
+                                    </div>
+                                </div>
+                                <div className="row">
+                                    <div className="col">
+                                        <Field
+                                            className="form-control"
+                                            id={`senders.${index}.firstName`}
+                                            name={`senders.${index}.firstName`}
+                                            placeholder="ex: Mary"
+                                        />
+                                    </div>
+                                    <div className="col">
+                                        <Field
+                                            className="form-control"
+                                            id={`senders.${index}.lastName`}
+                                            name={`senders.${index}.lastName`}
+                                            placeholder="ex: Mary"
+                                        />
+                                    </div>
+                                </div>
 
-                <Form.Group controlId="sender-phone">
-                    <Form.Label>Sender Phone</Form.Label>
-                    <Form.Control type="text" name="senderPhone" placeholder="555 555 5555" />
-                </Form.Group>
+                                <div className="row">
+                                    <div className="col">
+                                        <label for={`senders.${index}.phone`}>Sender Phone</label>
+                                    </div>
+                                    <div className="col">
+                                        <label for={`senders.${index}.email`}>Sender Email</label>
+                                    </div>
+                                </div>
+                                <div className="row">
+                                    <div className="col">
+                                        <Field
+                                            className="form-control"
+                                            type="tel"
+                                            id={`senders.${index}.phone`}
+                                            name={`senders.${index}.phone`}
+                                            placeholder="ex: Mary"
+                                        />
+                                    </div>
+                                    <div className="col">
+                                        <Field
+                                            className="form-control"
+                                            type="email"
+                                            id={`senders.${index}.email`}
+                                            name={`senders.${index}.email`}
+                                            placeholder="ex: Mary"
+                                        />
+                                    </div>
+                                </div>
+                                <button type="button" onClick={() => arrayHelpers.push({})}>add</button>
+                            </div>
+                        ))}</>
+                    )}
+                />
 
-                <Form.Group controlId="pickup-address">
-                    <Form.Label>Pickup Address</Form.Label>
-                    <Form.Control as="textarea" name="pickupAddress" rows="3" onBlur={(e) => {
-                        const maps = this.getGMapsURI(e.currentTarget.value);
-                        console.log(maps);
-                    }}/>
-                </Form.Group>
+                <div className="form-group">
+                    <label for="pickupAddress">Pickup Address</label>
+                    <Field
+                        as="textarea"
+                        className="form-control"
+                        id="pickupAddress"
+                        name="pickupAddress"
+                    />
+                </div>
 
-                <Form.Group controlId="recipient-name">
-                    <Form.Label>Recipient Name</Form.Label>
-                    <Form.Control type="text" name="recipientName" placeholder="ex: Mary" />
-                </Form.Group>
+                <FieldArray
+                    name="recipients"
+                    render={arrayHelpers => (
+                        <>
+                            {values.recipients.map((recipient, index) => (
+                            <div>
+                                <button
+                                    type="button"
+                                    onClick={() => arrayHelpers.remove(index)}
+                                >remove</button>
+                                <div className="row">
+                                    <div className="col">
+                                        <label for={`recipients.${index}.firstName`}>Recipient Name</label>
+                                    </div>
+                                    <div className="col">
+                                        <label for={`recipients.${index}.lastName`}>Recipient Last Name</label>
+                                    </div>
+                                </div>
+                                <div className="row">
+                                    <div className="col">
+                                        <Field
+                                            className="form-control"
+                                            id={`recipients.${index}.firstName`}
+                                            name={`recipients.${index}.firstName`}
+                                            placeholder="ex: Mary"
+                                        />
+                                    </div>
+                                    <div className="col">
+                                        <Field
+                                            className="form-control"
+                                            id={`recipients.${index}.lastName`}
+                                            name={`recipients.${index}.lastName`}
+                                            placeholder="ex: Mary"
+                                        />
+                                    </div>
+                                </div>
 
-                <Form.Group controlId="recipient-email">
-                    <Form.Label>Recipient Email</Form.Label>
-                    <Form.Control type="email" name="recipientEmail" placeholder="doc@foo.com" />
-                </Form.Group>
+                                <div className="row">
+                                    <div className="col">
+                                        <label for={`recipients.${index}.phone`}>Recipient Phone</label>
+                                    </div>
+                                    <div className="col">
+                                        <label for={`recipients.${index}.email`}>Recipient Email</label>
+                                    </div>
+                                </div>
+                                <div className="row">
+                                    <div className="col">
+                                        <Field
+                                            className="form-control"
+                                            type="tel"
+                                            id={`recipients.${index}.phone`}
+                                            name={`recipients.${index}.phone`}
+                                            placeholder="ex: Mary"
+                                        />
+                                    </div>
+                                    <div className="col">
+                                        <Field
+                                            className="form-control"
+                                            type="email"
+                                            id={`recipients.${index}.email`}
+                                            name={`recipients.${index}.email`}
+                                            placeholder="ex: Mary"
+                                        />
+                                    </div>
+                                </div>
+                                <button type="button" onClick={() => arrayHelpers.push({})}>add</button>
+                            </div>
+                        ))}</>
+                    )}
+                />
 
-                <Form.Group controlId="recipient-phone">
-                    <Form.Label>Recipient Phone</Form.Label>
-                    <Form.Control type="text" name="recipientPhone" placeholder="555 555 5555" />
-                </Form.Group>
+                <div className="form-group">
+                    <label for="deliveryAddress">Delivery Address</label>
+                    <Field
+                        as="textarea"
+                        className="form-control"
+                        id="deliveryAddress"
+                        name="deliveryAddress"
+                    />
+                </div>
 
-                <Form.Group controlId="delivery-address">
-                    <Form.Label>Delivery Address</Form.Label>
-                    <Form.Control as="textarea" name="deliveryAddress" rows="3" />
-                </Form.Group>
                 <Button type="submit">Submit form</Button>
-            </Form>
+            </Formk>
                     )}
             </Formik>
             </div>
