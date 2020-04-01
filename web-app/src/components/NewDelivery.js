@@ -17,6 +17,7 @@ class NewDelivery extends Component {
                 <Formik
                 initialValues={{
                     item: '',
+                    description: '',
                     senders: [{ firstName: '', lastName: '', phone: '', email: '' }],
                     recipients: [{ firstName: '', lastName: '', phone: '', email: '' }]
                 }}
@@ -50,7 +51,15 @@ class NewDelivery extends Component {
                     />
                 </div>
 
-                todo descr
+                <div className="form-group">
+                    <label for="description">Description</label>
+                    <Field
+                        as="textarea"
+                        className="form-control"
+                        id="description"
+                        name="description"
+                    />
+                </div>
 
                 <FieldArray
                     name="senders"
