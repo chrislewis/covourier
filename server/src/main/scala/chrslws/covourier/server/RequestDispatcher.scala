@@ -1,15 +1,17 @@
 package chrslws.covourier.server
 
-import chrslws.covourier.service.DeliveryService
+import java.nio.charset.Charset
+
 import chrslws.covourier.model.Status
-import io.circe.{Encoder, Json}
+import chrslws.covourier.service.DeliveryService
 import io.circe.generic.auto._
 import io.circe.syntax._
+import io.circe.{Encoder, Json}
 import io.netty.buffer.Unpooled
 import io.netty.handler.codec.http.HttpHeaderNames.{CONTENT_LENGTH, CONTENT_TYPE}
 import io.netty.handler.codec.http.HttpHeaderValues.APPLICATION_JSON
-import io.netty.handler.codec.http.HttpResponseStatus.{NOT_FOUND, OK}
-import io.netty.handler.codec.http.{DefaultFullHttpResponse, HttpMethod, HttpRequest}
+import io.netty.handler.codec.http.HttpResponseStatus.{NOT_FOUND, NOT_IMPLEMENTED, OK}
+import io.netty.handler.codec.http.{DefaultFullHttpResponse, HttpContent, HttpMethod, HttpRequest}
 
 class RequestDispatcher(service: DeliveryService) {
 
@@ -18,8 +20,10 @@ class RequestDispatcher(service: DeliveryService) {
   }
 
   def dispatch(request: HttpRequest) = {
-    (request.uri(), request.method()) match {
-      case ("/deliveries", HttpMethod.GET) =>
+    val path = request.uri().split("/").toList.tail // drop leading slash
+
+    (path, request.method()) match {
+      case ("deliveries" :: Nil, HttpMethod.GET) =>
         val deliveries = service.getAll()
         val jsonText = deliveries.asJson.noSpaces
         val response = new DefaultFullHttpResponse(
@@ -31,8 +35,19 @@ class RequestDispatcher(service: DeliveryService) {
           .set(CONTENT_TYPE, APPLICATION_JSON)
           .setInt(CONTENT_LENGTH, response.content.readableBytes)
         response
+
+      case ("deliveries" :: Nil, HttpMethod.POST) =>
+        val buf = request.asInstanceOf[HttpContent].content()
+
+        println(buf.toString(Charset.forName("UTF-8")))
+        val response = new DefaultFullHttpResponse(request.protocolVersion(), NOT_IMPLEMENTED)
+        response.headers().setInt(CONTENT_LENGTH, 0)
+        response
+
       case _ =>
-        new DefaultFullHttpResponse(request.protocolVersion(), NOT_FOUND)
+        val response = new DefaultFullHttpResponse(request.protocolVersion(), NOT_FOUND)
+        response.headers().setInt(CONTENT_LENGTH, 0)
+        response
     }
   }
 }

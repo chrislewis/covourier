@@ -2,8 +2,11 @@ package chrslws.covourier.server
 
 import io.netty.channel.ChannelInitializer
 import io.netty.channel.socket.SocketChannel
-import io.netty.handler.codec.http.HttpServerCodec
-import io.netty.handler.codec.http.HttpServerExpectContinueHandler
+import io.netty.handler.codec.http.{
+  HttpObjectAggregator,
+  HttpServerCodec,
+  HttpServerExpectContinueHandler
+}
 import io.netty.handler.codec.http.cors.{CorsConfigBuilder, CorsHandler}
 import io.netty.handler.ssl.SslContext
 
@@ -30,6 +33,7 @@ class HttpHelloWorldServerInitializer(val sslCtx: SslContext)
     val p = ch.pipeline
     if (sslCtx != null) p.addLast(sslCtx.newHandler(ch.alloc))
     p.addLast(new HttpServerCodec)
+    p.addLast(new HttpObjectAggregator(1048576))
     p.addLast(new HttpServerExpectContinueHandler)
     p.addLast(new CorsHandler(corsConfig))
     p.addLast(new HttpHelloWorldServerHandler)
