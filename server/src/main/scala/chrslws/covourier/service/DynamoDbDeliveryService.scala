@@ -5,10 +5,7 @@ import java.util.UUID
 import chrslws.covourier.model._
 import com.amazonaws.client.builder.AwsClientBuilder
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder
-import com.amazonaws.services.dynamodbv2.document.spec.UpdateItemSpec
-import com.amazonaws.services.dynamodbv2.document.utils.ValueMap
 import com.amazonaws.services.dynamodbv2.document.{DynamoDB, Item}
-import com.amazonaws.services.dynamodbv2.model.ConditionalCheckFailedException
 
 import scala.collection.mutable.ListBuffer
 
@@ -30,7 +27,6 @@ object DynamoDbDeliveryService {
   val newDeliveryFixture =
     NewDelivery(
       "Fake item",
-      Option(Courier(UUID.randomUUID(), "John", "B")),
       Address("123 Fake St", "Brooklyn", "NY", "11222"),
       List(Contact("Picker", "Upper", "123-456-7890")),
       Address("321 Also Fake St", "Brooklyn", "NY", "11222"),
@@ -42,33 +38,31 @@ final class DynamoDbDeliveryService(dynamoDb: DynamoDB) extends DeliveryService 
 
   private val table = dynamoDb.getTable("Deliveries")
 
-  override def claimDelivery(deliveryId: UUID, courier: Courier): Delivery = {
-    val update = new UpdateItemSpec()
-      .withPrimaryKey("id", deliveryId.toString)
-      .withUpdateExpression("set R_status = :status, courier = :courier")
-      .withConditionExpression("R_status = :currentStatus")
-      .withValueMap(
-        new ValueMap()
-          .withString(":status", Status.Assigned.name)
-          .withMap(":courier", courerAsMap(courier))
-          .withString(":currentStatus", Status.Unassigned.name)
-      )
-      .withReturnValues("ALL_NEW")
-
-    try {
-      val udpated = table.updateItem(update)
-      readDelivery(udpated.getItem)
-    } catch {
-      case _: ConditionalCheckFailedException => ???
-    }
-  }
+//  override def claimDelivery(deliveryId: UUID, courier: Courier): Delivery = {
+//    val update = new UpdateItemSpec()
+//      .withPrimaryKey("id", deliveryId.toString)
+//      .withUpdateExpression("set R_status = :status, courier = :courier")
+//      .withConditionExpression("R_status = :currentStatus")
+//      .withValueMap(
+//        new ValueMap()
+//          .withString(":status", Status.Assigned.name)
+//          .withString(":currentStatus", Status.Unassigned.name)
+//      )
+//      .withReturnValues("ALL_NEW")
+//
+//    try {
+//      val udpated = table.updateItem(update)
+//      readDelivery(udpated.getItem)
+//    } catch {
+//      case _: ConditionalCheckFailedException => ???
+//    }
+//  }
 
   def createNew(delivery: NewDelivery): Delivery = {
 
     val d = Delivery(
       UUID.randomUUID(),
       delivery.item,
-      delivery.courier,
       Status.Unassigned,
       delivery.pickupAddress,
       delivery.pickupContacts,
@@ -98,8 +92,9 @@ final class DynamoDbDeliveryService(dynamoDb: DynamoDB) extends DeliveryService 
         "pickupContacts",
         java.util.List
           .of(d.pickupContacts.map {
-            case Contact(fn, ln, p) =>
-              java.util.Map.of[String, String]("firstName", fn, "lastName", ln, "phone", p)
+            case Contact(fn, ln, p, e) =>
+              java.util.Map
+                .of[String, String]("firstName", fn, "lastName", ln, "phone", p, "email", e)
           }: _*)
       )
       .withMap(
@@ -120,17 +115,11 @@ final class DynamoDbDeliveryService(dynamoDb: DynamoDB) extends DeliveryService 
         "deliveryContacts",
         java.util.List
           .of(d.deliveryContacts.map {
-            case Contact(fn, ln, p) =>
-              java.util.Map.of[String, String]("firstName", fn, "lastName", ln, "phone", p)
+            case Contact(fn, ln, p, e) =>
+              java.util.Map
+                .of[String, String]("firstName", fn, "lastName", ln, "phone", p, "email", e)
           }: _*)
       )
-
-    d.courier.foreach { c =>
-      item.withMap(
-        "courier",
-        courerAsMap(c)
-      )
-    }
 
     table.putItem(item)
     d
@@ -156,15 +145,6 @@ final class DynamoDbDeliveryService(dynamoDb: DynamoDB) extends DeliveryService 
       case Status.Cancelled.name  => Status.Cancelled
     }
 
-  def readCourier(map: Option[java.util.Map[String, String]]): Option[Courier] =
-    map.collect { m =>
-      Courier(
-        UUID.fromString(m.get("id")),
-        m.get("firstName"),
-        m.get("lastName")
-      )
-    }
-
   def readAddress(map: java.util.Map[String, String]): Address =
     Address(
       map.get("streetAddress"),
@@ -181,7 +161,8 @@ final class DynamoDbDeliveryService(dynamoDb: DynamoDB) extends DeliveryService 
       contacts += Contact(
         item.get("firstName"),
         item.get("lastName"),
-        item.get("phone")
+        item.get("phone"),
+        item.get("email")
       )
     }
     contacts.toList
@@ -191,7 +172,6 @@ final class DynamoDbDeliveryService(dynamoDb: DynamoDB) extends DeliveryService 
     Delivery(
       UUID.fromString(item.getString("id")),
       item.getString("item"),
-      courier = readCourier(Option(item.getMap[String]("courier"))),
       status =
         readStatus(Option(item.getString("R_status"))).getOrElse(sys.error("Invalid status!")),
       pickupAddress = readAddress(item.getMap[String]("pickupAddress")),
@@ -200,8 +180,4 @@ final class DynamoDbDeliveryService(dynamoDb: DynamoDB) extends DeliveryService 
       deliveryContacts =
         readContacts(item.getList[java.util.Map[String, String]]("deliveryContacts"))
     )
-
-  def courerAsMap(c: Courier) =
-    java.util.Map
-      .of[String, String]("id", c.id.toString, "firstName", c.firstName, "lastName", c.lastName)
 }

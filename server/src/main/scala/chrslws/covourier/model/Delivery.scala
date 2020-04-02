@@ -5,7 +5,6 @@ import java.util.UUID
 final case class Delivery(
     id: UUID,
     item: String,
-    courier: Option[Courier],
     status: Status,
     pickupAddress: Address,
     pickupContacts: List[Contact],

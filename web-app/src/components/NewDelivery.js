@@ -5,36 +5,6 @@ import dayjs from 'dayjs';
 
 class NewDelivery extends Component {
 
-    // const now = () => {
-    //     date = new Date()
-
-    //     offset = date.getTimezoneOffset()
-    //     offsetAbs = Math.abs(offset)
-    //     hours = Math.floor(offsetAbs / 60)
-    //     mins = offsetAbs % 60
-
-    //     sign = offset < 0 ? '-' : '+';
-    //     paddedHours = (hours < 9 ? '0' : '') + hours
-    //     paddedMins = (mins < 9 ? '0' : '') + mins
-    //     return `${sign}${paddedHours}:${paddedMins}`
-
-    //     // localDateTime = date.toISOString().substr(0, 19)
-
-    //     // return `${localDateTime}${sign}${paddedHours}:${paddedMins}`
-    // }
-
-    dateThing() {
-        const date = new Date()
-        const offset = date.getTimezoneOffset()
-        const offsetAbs = Math.abs(offset)
-        const hours = Math.floor(offsetAbs / 60)
-        const mins = offsetAbs % 60
-        const sign = offset < 0 ? '+' : '-';
-        const paddedHours = (hours < 9 ? '0' : '') + hours
-        const paddedMins = (mins < 9 ? '0' : '') + mins
-        return `${sign}${paddedHours}:${paddedMins}`
-    }
-
     render() {
         const day = dayjs('2018-04-04T16:00')
         console.log(dayjs('2020-02-04T16:00'))
