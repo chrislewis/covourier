@@ -1,15 +1,8 @@
 import React, { Component } from 'react';
-import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import { Formik, Form as Formk, Field, FieldArray } from 'formik';
 
 class NewDelivery extends Component {
-
-    getGMapsURI(raw) {
-        const clean = raw.replace("\n", ",");
-        const encoded = encodeURIComponent(clean);
-        return `https://www.google.com/maps/search/?api=1&query=${encoded}`;
-    }
 
     render() {
         return (
@@ -19,6 +12,7 @@ class NewDelivery extends Component {
                     item: '',
                     description: '',
                     senders: [{ firstName: '', lastName: '', phone: '', email: '' }],
+                    pickupTime: new Date().toISOString(),
                     recipients: [{ firstName: '', lastName: '', phone: '', email: '' }]
                 }}
                  onSubmit={(values, { setSubmitting }) => {
@@ -126,6 +120,12 @@ class NewDelivery extends Component {
                                         />
                                     </div>
                                 </div>
+
+                                <div>
+                                    <label for="pickupTime">Pickup Time</label>
+                                    <input class="form-control" id="pickupTime" name="pickupTime" type="datetime-local" onChange={(e) => values.pickupTime = e.currentTarget.value} />
+                                </div>
+
                                 <button type="button" onClick={() => arrayHelpers.push({})}>add</button>
                             </div>
                         ))}</>
