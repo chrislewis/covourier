@@ -3,14 +3,11 @@
     {
       "PutRequest": {
         "Item": {
-          "id":       { "S": "ad4b9078-39ec-41e2-82ca-e1ec412e2229" },
-          "item":     { "S": "Small plastic parts (like a ziplock full)" },
-          "courier":  { "M": {
-            "id":         { "S":  "6a31fbb5-a581-442c-8753-72c895543cc6" },
-            "firstName":  { "S":  "John" },
-            "lastName":   { "S":  "B" }
-          }},
+          "id":           { "S": "ad4b9078-39ec-41e2-82ca-e1ec412e2229" },
+          "item":         { "S": "Small plastic parts" },
+          "description":  { "S":  "like a ziplock full" },
           "R_status": { "S":  "IN_TRANSIT" },
+          "pickupTime": { "S":  "2020-03-31T13:04:52Z" },
           "pickupAddress" : { "M": {
             "streetAddress":  { "S":  "150 55th Street" },
             "city":           { "S":  "Brooklyn" },
@@ -21,7 +18,8 @@
             { "M":  {
               "firstName":  { "S":  "Mary" },
               "lastName":   { "S":  "L" },
-              "phone":      { "S":  "555-555-5555" }
+              "phone":      { "S":  "555-555-5555" },
+              "email":      { "S":  "mk@fake.foo" }
             }}
           ] },
           "deliveryAddress": { "M": {
@@ -34,7 +32,8 @@
             { "M":  {
               "firstName":  { "S":  "Bob" },
               "lastName":   { "S":  "M" },
-              "phone":      { "S":  "444-444-4444" }
+              "phone":      { "S":  "444-444-4444" },
+              "email":      { "S":  "bm@fake.foo" }
             }}
           ] }
         }
@@ -47,11 +46,13 @@
             "S": "a252342b-4bda-4c2f-a21d-7157af1ab5cf"
           },
           "item": {
-            "S": "Small plastic parts (like a ziplock full)"
+            "S": "Small plastic parts"
           },
+          "description":  { "S":  "like a ziplock full" },
           "R_status": {
             "S": "UNASSIGNED"
           },
+          "pickupTime": { "S":  "2020-03-31T13:04:52Z" },
           "pickupAddress": {
             "M": {
               "streetAddress": {
@@ -80,7 +81,8 @@
                   },
                   "phone": {
                     "S": "555-555-5555"
-                  }
+                  },
+                  "email":      { "S":  "ml@fake.foo" }
                 }
               }
             ]
@@ -113,7 +115,8 @@
                   },
                   "phone": {
                     "S": "444-444-4444"
-                  }
+                  },
+                  "email":      { "S":  "bm@fake.foo" }
                 }
               }
             ]

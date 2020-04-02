@@ -61,6 +61,6 @@ class Deliveries {
     }
 }
 
-const deliveries = Deliveries.dummy();
+const deliveries = Deliveries.local();
 
 export { deliveries };

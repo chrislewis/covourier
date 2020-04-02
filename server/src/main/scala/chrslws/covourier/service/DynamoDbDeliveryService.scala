@@ -1,6 +1,8 @@
 package chrslws.covourier.service
 
-import java.util.UUID
+import java.time.Instant
+import java.time.format.DateTimeFormatterBuilder
+import java.util.{Locale, UUID}
 
 import chrslws.covourier.model._
 import com.amazonaws.client.builder.AwsClientBuilder
@@ -24,19 +26,25 @@ object DynamoDbDeliveryService {
     )
   )
 
-  val newDeliveryFixture =
-    NewDelivery(
-      "Fake item",
-      Address("123 Fake St", "Brooklyn", "NY", "11222"),
-      List(Contact("Picker", "Upper", "123-456-7890")),
-      Address("321 Also Fake St", "Brooklyn", "NY", "11222"),
-      List(Contact("Dropper", "Offer", "321-456-7890"))
-    )
+//  val newDeliveryFixture =
+//    NewDelivery(
+//      "Fake item",
+//      Address("123 Fake St", "Brooklyn", "NY", "11222"),
+//      List(Contact("Picker", "Upper", "123-456-7890")),
+//      Address("321 Also Fake St", "Brooklyn", "NY", "11222"),
+//      List(Contact("Dropper", "Offer", "321-456-7890"))
+//    )
 }
 
 final class DynamoDbDeliveryService(dynamoDb: DynamoDB) extends DeliveryService {
 
   private val table = dynamoDb.getTable("Deliveries")
+
+  private val dateTimeFormatter =
+    new DateTimeFormatterBuilder()
+      .parseCaseInsensitive()
+      .appendInstant(0)
+      .toFormatter(Locale.getDefault(Locale.Category.FORMAT))
 
 //  override def claimDelivery(deliveryId: UUID, courier: Courier): Delivery = {
 //    val update = new UpdateItemSpec()
@@ -63,7 +71,9 @@ final class DynamoDbDeliveryService(dynamoDb: DynamoDB) extends DeliveryService 
     val d = Delivery(
       UUID.randomUUID(),
       delivery.item,
+      delivery.description,
       Status.Unassigned,
+      delivery.pickupTime,
       delivery.pickupAddress,
       delivery.pickupContacts,
       delivery.deliveryAddress,
@@ -73,7 +83,9 @@ final class DynamoDbDeliveryService(dynamoDb: DynamoDB) extends DeliveryService 
     val item = new Item()
       .withString("id", d.id.toString)
       .withString("item", d.item)
+      .withString("description", d.description)
       .withString("R_status", d.status.name)
+      .withString("pickupTime", dateTimeFormatter.format(d.pickupTime))
       .withMap(
         "pickupAddress",
         java.util.Map
@@ -172,8 +184,10 @@ final class DynamoDbDeliveryService(dynamoDb: DynamoDB) extends DeliveryService 
     Delivery(
       UUID.fromString(item.getString("id")),
       item.getString("item"),
+      item.getString("description"),
       status =
         readStatus(Option(item.getString("R_status"))).getOrElse(sys.error("Invalid status!")),
+      Instant.parse(item.getString("pickupTime")),
       pickupAddress = readAddress(item.getMap[String]("pickupAddress")),
       pickupContacts = readContacts(item.getList[java.util.Map[String, String]]("pickupContacts")),
       deliveryAddress = readAddress(item.getMap[String]("deliveryAddress")),
