@@ -1,10 +1,44 @@
 import React, { Component } from 'react';
 import Button from 'react-bootstrap/Button';
 import { Formik, Form as Formk, Field, FieldArray } from 'formik';
+import dayjs from 'dayjs';
 
 class NewDelivery extends Component {
 
+    // const now = () => {
+    //     date = new Date()
+
+    //     offset = date.getTimezoneOffset()
+    //     offsetAbs = Math.abs(offset)
+    //     hours = Math.floor(offsetAbs / 60)
+    //     mins = offsetAbs % 60
+
+    //     sign = offset < 0 ? '-' : '+';
+    //     paddedHours = (hours < 9 ? '0' : '') + hours
+    //     paddedMins = (mins < 9 ? '0' : '') + mins
+    //     return `${sign}${paddedHours}:${paddedMins}`
+
+    //     // localDateTime = date.toISOString().substr(0, 19)
+
+    //     // return `${localDateTime}${sign}${paddedHours}:${paddedMins}`
+    // }
+
+    dateThing() {
+        const date = new Date()
+        const offset = date.getTimezoneOffset()
+        const offsetAbs = Math.abs(offset)
+        const hours = Math.floor(offsetAbs / 60)
+        const mins = offsetAbs % 60
+        const sign = offset < 0 ? '+' : '-';
+        const paddedHours = (hours < 9 ? '0' : '') + hours
+        const paddedMins = (mins < 9 ? '0' : '') + mins
+        return `${sign}${paddedHours}:${paddedMins}`
+    }
+
     render() {
+        const day = dayjs('2018-04-04T16:00')
+        console.log(dayjs('2020-02-04T16:00'))
+        console.log(day.format())
         return (
             <div className="card">
                 <Formik
@@ -12,13 +46,15 @@ class NewDelivery extends Component {
                     item: '',
                     description: '',
                     senders: [{ firstName: '', lastName: '', phone: '', email: '' }],
-                    pickupTime: new Date().toISOString(),
+                    pickupTime: '2020-04-02T10:34', //new Date().toISOString(),
                     recipients: [{ firstName: '', lastName: '', phone: '', email: '' }]
                 }}
                  onSubmit={(values, { setSubmitting }) => {
                     console.log(values)
                     setTimeout(() => {
                         setSubmitting(false);
+                        values.pickupTime = dayjs(values.pickupTime).format()
+                        console.log(values.pickupTime)
                       alert(JSON.stringify(values, null, 2));
                       
                     }, 400);
@@ -123,7 +159,7 @@ class NewDelivery extends Component {
 
                                 <div>
                                     <label for="pickupTime">Pickup Time</label>
-                                    <input class="form-control" id="pickupTime" name="pickupTime" type="datetime-local" onChange={(e) => values.pickupTime = e.currentTarget.value} />
+                                    <input className="form-control" id="pickupTime" name="pickupTime" value={values.pickupTime} type="datetime-local" onChange={handleChange} />
                                 </div>
 
                                 <button type="button" onClick={() => arrayHelpers.push({})}>add</button>
