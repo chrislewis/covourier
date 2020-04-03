@@ -1,11 +1,11 @@
 package chrslws.covourier.model
 
-import java.time.Instant
+import java.time.OffsetDateTime
 
 final case class NewDelivery(
     item: String,
     description: String,
-    pickupTime: Instant,
+    pickupTime: OffsetDateTime,
     pickupAddress: Address,
     pickupContacts: List[Contact],
     deliveryAddress: Address,

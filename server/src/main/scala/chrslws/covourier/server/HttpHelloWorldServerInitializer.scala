@@ -29,7 +29,13 @@ import io.netty.handler.ssl.SslContext
 class HttpHelloWorldServerInitializer(val sslCtx: SslContext)
     extends ChannelInitializer[SocketChannel] {
   override def initChannel(ch: SocketChannel): Unit = {
-    val corsConfig = CorsConfigBuilder.forAnyOrigin().allowNullOrigin().allowCredentials().build()
+    val corsConfig =
+      CorsConfigBuilder
+        .forAnyOrigin()
+        .allowNullOrigin()
+        .allowCredentials() // reconsider so we dont accept cookies
+        .allowedRequestHeaders("Content-Type")
+        .build()
     val p = ch.pipeline
     if (sslCtx != null) p.addLast(sslCtx.newHandler(ch.alloc))
     p.addLast(new HttpServerCodec)

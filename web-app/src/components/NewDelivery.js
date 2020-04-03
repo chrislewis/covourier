@@ -6,9 +6,7 @@ import dayjs from 'dayjs';
 class NewDelivery extends Component {
 
     render() {
-        const day = dayjs('2018-04-04T16:00')
-        console.log(dayjs('2020-02-04T16:00'))
-        console.log(day.format())
+        const { deliveryService } = this.props;
         return (
             <div className="card">
                 <Formik
@@ -16,18 +14,39 @@ class NewDelivery extends Component {
                     item: '',
                     description: '',
                     senders: [{ firstName: '', lastName: '', phone: '', email: '' }],
-                    pickupTime: '2020-04-02T10:34', //new Date().toISOString(),
-                    recipients: [{ firstName: '', lastName: '', phone: '', email: '' }]
+                    pickupAddress: { streetAddress: '', city: '', state: '', zip: '' },
+                    pickupTime: new Date().toISOString(),
+                    recipients: [{ firstName: '', lastName: '', phone: '', email: '' }],
+                    deliveryAddress: { streetAddress: '', city: '', state: '', zip: '' }
                 }}
-                 onSubmit={(values, { setSubmitting }) => {
-                    console.log(values)
-                    setTimeout(() => {
-                        setSubmitting(false);
-                        values.pickupTime = dayjs(values.pickupTime).format()
-                        console.log(values.pickupTime)
-                      alert(JSON.stringify(values, null, 2));
+                onSubmit={(values, { setSubmitting }) => {
+                    const { item, description, pickupTime, pickupAddress, senders, deliveryAddress, recipients } = values
+                    const newDelivery = {
+                        item,
+                        description,
+                        pickupTime: dayjs(pickupTime).format(),
+                        pickupAddress,
+                        pickupContacts: senders,
+                        deliveryAddress,
+                        deliveryContacts: recipients
+
+                    }
+
+                    console.log(newDelivery)
+                    deliveryService
+                        .createNew(newDelivery)
+                        .then((data) => {
+                            //this.setState({ deliveries: data })
+                            console.log('done')
+                        })
+
+                    // setTimeout(() => {
+                    //     setSubmitting(false);
+                    //     values.pickupTime = dayjs(values.pickupTime).format()
+                    //     console.log(values.pickupTime)
+                    // //   alert(JSON.stringify(values, null, 2));
                       
-                    }, 400);
+                    // }, 400);
                     }}
                     >
                     {({
@@ -134,19 +153,63 @@ class NewDelivery extends Component {
 
                                 <button type="button" onClick={() => arrayHelpers.push({})}>add</button>
                             </div>
-                        ))}</>
+                        ))}
+
+                        <div className="row">
+                            <div className="col">
+                                <label for='pickupAddress.streetAddress'>Street Address</label>
+                            </div>
+                        </div>
+                        <div className="row">
+                            <div className="col">
+                                <Field
+                                    className="form-control"
+                                    id='pickupAddress.streetAddress'
+                                    name='pickupAddress.streetAddress'
+                                    placeholder="ex: Mary"
+                                />
+                            </div>
+                        </div>
+                        <div className="row">
+                            <div className="col">
+                                <label for='pickupAddress.city'>City</label>
+                            </div>
+                            <div className="col">
+                                <label for='pickupAddress.state'>State</label>
+                            </div>
+                            <div className="col">
+                                <label for='pickupAddress.zip'>Zip</label>
+                            </div>
+                        </div>
+                        <div className="row">
+                            <div className="col">
+                                <Field
+                                    className="form-control"
+                                    id='pickupAddress.city'
+                                    name='pickupAddress.city'
+                                    placeholder="ex: Mary"
+                                />
+                            </div>
+                            <div className="col">
+                                <Field
+                                    className="form-control"
+                                    id='pickupAddress.state'
+                                    name='pickupAddress.state'
+                                    placeholder="ex: Mary"
+                                />
+                            </div>
+                            <div className="col">
+                                <Field
+                                    className="form-control"
+                                    id='pickupAddress.zip'
+                                    name='pickupAddress.zip'
+                                    placeholder="ex: Mary"
+                                />
+                            </div>
+                        </div>
+                        </>
                     )}
                 />
-
-                <div className="form-group">
-                    <label for="pickupAddress">Pickup Address</label>
-                    <Field
-                        as="textarea"
-                        className="form-control"
-                        id="pickupAddress"
-                        name="pickupAddress"
-                    />
-                </div>
 
                 <FieldArray
                     name="recipients"
@@ -215,19 +278,62 @@ class NewDelivery extends Component {
                                 </div>
                                 <button type="button" onClick={() => arrayHelpers.push({})}>add</button>
                             </div>
-                        ))}</>
+                        ))}
+                        <div className="row">
+                            <div className="col">
+                                <label for='deliveryAddress.streetAddress'>Street Address</label>
+                            </div>
+                        </div>
+                        <div className="row">
+                            <div className="col">
+                                <Field
+                                    className="form-control"
+                                    id='deliveryAddress.streetAddress'
+                                    name='deliveryAddress.streetAddress'
+                                    placeholder="ex: Mary"
+                                />
+                            </div>
+                        </div>
+                        <div className="row">
+                            <div className="col">
+                                <label for='deliveryAddress.city'>City</label>
+                            </div>
+                            <div className="col">
+                                <label for='deliveryAddress.state'>State</label>
+                            </div>
+                            <div className="col">
+                                <label for='deliveryAddress.zip'>Zip</label>
+                            </div>
+                        </div>
+                        <div className="row">
+                            <div className="col">
+                                <Field
+                                    className="form-control"
+                                    id='deliveryAddress.city'
+                                    name='deliveryAddress.city'
+                                    placeholder="ex: Mary"
+                                />
+                            </div>
+                            <div className="col">
+                                <Field
+                                    className="form-control"
+                                    id='deliveryAddress.state'
+                                    name='deliveryAddress.state'
+                                    placeholder="ex: Mary"
+                                />
+                            </div>
+                            <div className="col">
+                                <Field
+                                    className="form-control"
+                                    id='deliveryAddress.zip'
+                                    name='deliveryAddress.zip'
+                                    placeholder="ex: Mary"
+                                />
+                            </div>
+                        </div>
+                        </>
                     )}
                 />
-
-                <div className="form-group">
-                    <label for="deliveryAddress">Delivery Address</label>
-                    <Field
-                        as="textarea"
-                        className="form-control"
-                        id="deliveryAddress"
-                        name="deliveryAddress"
-                    />
-                </div>
 
                 <Button type="submit">Submit form</Button>
             </Formk>

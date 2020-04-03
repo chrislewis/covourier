@@ -1,6 +1,6 @@
 package chrslws.covourier.service
 
-import java.time.Instant
+import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatterBuilder
 import java.util.{Locale, UUID}
 
@@ -187,7 +187,7 @@ final class DynamoDbDeliveryService(dynamoDb: DynamoDB) extends DeliveryService 
       item.getString("description"),
       status =
         readStatus(Option(item.getString("R_status"))).getOrElse(sys.error("Invalid status!")),
-      Instant.parse(item.getString("pickupTime")),
+      OffsetDateTime.parse(item.getString("pickupTime")),
       pickupAddress = readAddress(item.getMap[String]("pickupAddress")),
       pickupContacts = readContacts(item.getList[java.util.Map[String, String]]("pickupContacts")),
       deliveryAddress = readAddress(item.getMap[String]("deliveryAddress")),

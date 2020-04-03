@@ -4,6 +4,20 @@ class Deliveries {
         this.url = url;
     }
 
+    createNew(newDelivery) {
+        return fetch(this.url, {
+            method: 'POST',
+            mode: 'cors',
+            cache: 'no-cache',
+            // credentials: 'same-origin', // need for cookies
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(newDelivery)
+        })
+            .then(res => res.json())
+    }
+
     getAll() {
         return fetch(this.url)
             .then(res => res.json())
