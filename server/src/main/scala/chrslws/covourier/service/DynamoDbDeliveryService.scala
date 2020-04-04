@@ -25,15 +25,6 @@ object DynamoDbDeliveryService {
         .build()
     )
   )
-
-//  val newDeliveryFixture =
-//    NewDelivery(
-//      "Fake item",
-//      Address("123 Fake St", "Brooklyn", "NY", "11222"),
-//      List(Contact("Picker", "Upper", "123-456-7890")),
-//      Address("321 Also Fake St", "Brooklyn", "NY", "11222"),
-//      List(Contact("Dropper", "Offer", "321-456-7890"))
-//    )
 }
 
 final class DynamoDbDeliveryService(dynamoDb: DynamoDB) extends DeliveryService {
