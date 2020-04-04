@@ -24,7 +24,7 @@ class App extends Component {
               <Deliveries deliveryService={this.deliveries} deliveries={this.state.deliveries} />
             </Route>
             <Route path="/delivery">
-              <NewDelivery />
+              <NewDelivery deliveryService={this.deliveries} />
             </Route>
           </Switch>
 

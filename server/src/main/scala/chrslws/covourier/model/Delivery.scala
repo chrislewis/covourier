@@ -1,12 +1,14 @@
 package chrslws.covourier.model
 
+import java.time.OffsetDateTime
 import java.util.UUID
 
 final case class Delivery(
     id: UUID,
     item: String,
-    courier: Option[Courier],
+    description: String,
     status: Status,
+    pickupTime: OffsetDateTime,
     pickupAddress: Address,
     pickupContacts: List[Contact],
     deliveryAddress: Address,
